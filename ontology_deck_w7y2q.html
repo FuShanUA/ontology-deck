@@ -525,7 +525,131 @@ svg {
             color: var(--text-primary);
             letter-spacing: 2px;
         }
+    
+        /* --- Search Modal Styles --- */
+        .global-search-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0F1A5C;
+            color: #F1E9D6;
+            border: 2px solid #F1E9D6;
+            padding: 12px 28px;
+            font-family: var(--font-body);
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .global-search-btn:hover {
+            background: #3A4593;
+            transform: translateX(-50%) translateY(-3px);
+        }
+        .search-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15vh;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .search-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .search-input-wrapper {
+            width: 85%;
+            max-width: 800px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid #F1E9D6;
+            font-size: 32px;
+            color: #F1E9D6;
+            padding: 10px 50px 10px 10px;
+            font-family: var(--font-display);
+            outline: none;
+        }
+        @media (min-width: 768px) {
+            .search-input { font-size: 48px; }
+        }
+        .search-input::placeholder {
+            color: rgba(241, 233, 214, 0.3);
+        }
+        .search-close {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 36px;
+            color: #F1E9D6;
+            cursor: pointer;
+            background: none;
+            border: none;
+            opacity: 0.7;
+        }
+        .search-close:hover { opacity: 1; }
+        .search-results {
+            width: 85%;
+            max-width: 800px;
+            margin-top: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-bottom: 50px;
+        }
+        .search-results::-webkit-scrollbar { display: none; }
+        .search-results { -ms-overflow-style: none; scrollbar-width: none; }
+        .search-result-item {
+            background: rgba(241, 233, 214, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(241, 233, 214, 0.2);
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        .search-result-item:hover {
+            background: rgba(241, 233, 214, 0.2);
+            border-color: #F1E9D6;
+            transform: translateX(5px);
+        }
+        .search-result-client {
+            font-size: 22px;
+            color: #F1E9D6;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .search-result-meta {
+            font-size: 14px;
+            color: #b03a2e;
+            font-weight: bold;
+            background: rgba(241, 233, 214, 0.8);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
     </style>
+
 </head>
 <body>
     <div class="deck-viewport">
@@ -7247,5 +7371,84 @@ svg {
 
         new SlidePresentation();
     </script>
+
+    <!-- Search Button & Modal -->
+    <button class="global-search-btn" onclick="openSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        搜索案例
+    </button>
+    <div class="search-modal" id="searchModal" onclick="closeSearch(event)">
+        <div class="search-input-wrapper" onclick="event.stopPropagation()">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索关键词 / 行业..." autocomplete="off">
+            <button class="search-close" onclick="closeSearch()">×</button>
+        </div>
+        <div class="search-results" id="searchResults" onclick="event.stopPropagation()"></div>
+    </div>
+    
+    <script>
+        const searchIndex = [{"id":"case-QW5kcmV0dGkgR2xvYmFs","client":"Andretti Global","industry":"体育与文娱","scenario":"情报分析与辅助决策"},{"id":"case-QW5kdXJpbA","client":"Anduril","industry":"国防与航空航天","scenario":"全局供应链与动态排产"},{"id":"case-QXJhbWFyaw","client":"Aramark","industry":"零售与消费","scenario":"研发与知识联邦"},{"id":"case-QXJjaGVyIEF2aWF0aW9u","client":"Archer Aviation","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-QXNzb2NpYXRlZCBNYXRlcmlhbHM","client":"Associated Materials","industry":"工业制造","scenario":"情报分析与辅助决策"},{"id":"case-U3VyZiBBaXI","client":"Surf Air","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-Q1BLQyBSYWls","client":"CPKC Rail","industry":"交通出行与物流","scenario":"全局资源协同与智能调度"},{"id":"case-Q2VudHJ1cyBFbmVyZ3k","client":"Centrus Energy","industry":"国防与航空航天","scenario":"全局供应链与动态排产"},{"id":"case-Q2lzY28gKOaAneenkSk","client":"Cisco (思科)","industry":"公共事业","scenario":"企业IT运维与数据治理"},{"id":"case-Q2l0eSBvZiBIb3Bl","client":"City of Hope","industry":"医疗与生命科学","scenario":"研发与知识联邦"},{"id":"case-Q2xhcmlvcw","client":"Clarios","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-Q29uYWdyYSBCcmFuZHM","client":"Conagra Brands","industry":"零售与消费","scenario":"风控、合规与安全审计"},{"id":"case-Q0JSRQ","client":"CBRE","industry":"建筑与房地产","scenario":"全局资源协同与智能调度"},{"id":"case-Q2xldmVsYW5kIENsaW5pYw","client":"Cleveland Clinic","industry":"医疗与生命科学","scenario":"全局资源协同与智能调度"},{"id":"case-Q29uY29yZGFuY2UgSGVhbHRoY2FyZSBTb2x1dGlvbnM","client":"Concordance Healthcare Solutions","industry":"医疗与生命科学","scenario":"全局供应链与动态排产"},{"id":"case-Q29uZSBIZWFsdGg","client":"Cone Health","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-Q3VtbWlucw","client":"Cummins","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-TWNDYXJ0aHkgQnVpbGRpbmcgQ29tcGFuaWVz","client":"McCarthy Building Companies","industry":"建筑与房地产","scenario":"全局资源协同与智能调度"},{"id":"case-QlAgKOiLseWbveefsayuSk","client":"BP (英国石油)","industry":"能源与化工","scenario":"预测性维护与设备孪生"},{"id":"case-RnJlZWRvbSBNb3J0Z2FnZQ","client":"Freedom Mortgage","industry":"金融与保险","scenario":"复杂流程自动化与智能客服"},{"id":"case-RXNrb20","client":"Eskom","industry":"能源与化工","scenario":"风控、合规与安全审计"},{"id":"case-RXVyb3BlYW4gQ3JpY2tldCBOZXR3b3Jr","client":"European Cricket Network","industry":"体育与文娱","scenario":"全局资源协同与智能调度"},{"id":"case-Rk9SVklB","client":"FORVIA","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-Rmlyc3QgU29sYXI","client":"First Solar","industry":"工业制造","scenario":"复杂流程自动化与智能客服"},{"id":"case-U2Vsa2lyaw","client":"Selkirk","industry":"零售与消费","scenario":"全局资源协同与智能调度"},{"id":"case-TWl4b2xvZ3k","client":"Mixology","industry":"零售与消费","scenario":"复杂流程自动化与智能客服"},{"id":"case-RnVqaXRzdQ","client":"Fujitsu","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-SENBIEhlYWx0aGNhcmU","client":"HCA Healthcare","industry":"医疗与生命科学","scenario":"全局供应链与动态排产"},{"id":"case-SG9zcGl0YWwgZm9yIFNwZWNpYWwgU3VyZ2VyeSAoSFNTKQ","client":"Hospital for Special Surgery (HSS)","industry":"医疗与生命科学","scenario":"情报分析与辅助决策"},{"id":"case-SGVhbHRocGVhaw","client":"Healthpeak","industry":"建筑与房地产","scenario":"复杂流程自动化与智能客服"},{"id":"case-SGVydHo","client":"Hertz","industry":"交通出行与物流","scenario":"企业IT运维与数据治理"},{"id":"case-Sm9pbnQgQ29tbWlzc2lvbg","client":"Joint Commission","industry":"医疗与生命科学","scenario":"全局资源协同与智能调度"},{"id":"case-S2lya2xhbmQgJiBFbGxpcw","client":"Kirkland & Ellis","industry":"企业与专业服务","scenario":"研发与知识联邦"},{"id":"case-S29tYXRzdQ","client":"Komatsu","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-TGVhcg","client":"Lear","industry":"工业制造","scenario":"复杂流程自动化与智能客服"},{"id":"case-TGVubmFy","client":"Lennar","industry":"建筑与房地产","scenario":"全局供应链与动态排产"},{"id":"case-THVtZW4","client":"Lumen","industry":"科技与通信","scenario":"企业IT运维与数据治理"},{"id":"case-TWFjRGVybWlkIEVudGhvbmU","client":"MacDermid Enthone","industry":"能源与化工","scenario":"研发与知识联邦"},{"id":"case-TW9yZ2FuIFN0YW5sZXkgKOaRqeagueWjqS4ueWIqSk","client":"Morgan Stanley (摩根士丹利)","industry":"金融与保险","scenario":"风控、合规与安全审计"},{"id":"case-TW9yc29uIEdyb3Vw","client":"Morson Group","industry":"企业与专业服务","scenario":"复杂流程自动化与智能客服"},{"id":"case-TW91bnQgU2luYWkgKOilvWliOWxseWMumZoikgLSDluorkvY3lrrnph4nrqHnkIY","client":"Mount Sinai (西奈山医院) - 床位容量管理","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-Q0RBTyAo576O5Zu95Zu96Ziy6YOoKQ","client":"CDAO (美国国防部)","industry":"国防与航空航天","scenario":"情报分析与辅助决策"},{"id":"case-TmFzZGFx","client":"Nasdaq","industry":"金融与保险","scenario":"风控、合规与安全审计"},{"id":"case-TnNjYWxl","client":"Nscale","industry":"科技与通信","scenario":"全局供应链与动态排产"},{"id":"case-R2FsbGF0aW4","client":"Gallatin","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-RWF0b24gLSDplIDllK7phY3nva7kuI7miqXku7coQ1BRKQ","client":"Eaton - 销售配置与报价(CPQ)","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-UGFyZXhlbA","client":"Parexel","industry":"医疗与生命科学","scenario":"研发与知识联邦"},{"id":"case-UGFydHMgVG93bg","client":"Parts Town","industry":"零售与消费","scenario":"复杂流程自动化与智能客服"},{"id":"case-5pQ5aSn5Z6L5Yi26YCg5LyB5Lia","client":"某大型制造企业","industry":"工业制造","scenario":"研发与知识联邦"},{"id":"case-U0xC","client":"SLB","industry":"能源与化工","scenario":"风控、合规与安全审计"},{"id":"case-UjEgUkNN","client":"R1 RCM","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-R2VvS2V5","client":"GeoKey","industry":"建筑与房地产","scenario":"全局资源协同与智能调度"},{"id":"case-QWNjZW50dXJlICjln4Pmo67lk7Ip","client":"Accenture (埃森哲)","industry":"科技与通信","scenario":"风控、合规与安全审计"},{"id":"case-U2VudGFyYSBIZWFsdGhjYXJl","client":"Sentara Healthcare","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-R0UgQWVyb3NwYWNl","client":"GE Aerospace","industry":"国防与航空航天","scenario":"全局供应链与动态排产"},{"id":"case-U291dGhlcm4gQ2FsaWZvcm5pYSBFZGlzb24","client":"Southern California Edison","industry":"公共事业","scenario":"风控、合规与安全审计"},{"id":"case-VFdH","client":"TWG","industry":"金融与保险","scenario":"研发与知识联邦"},{"id":"case-UGFuYXNvbmljICjmnb7kuIvljJfnvo7og73mupApIC0g5YWo5bGA6LWE5rqQ5Y2P5ZCM5LiO5pm66IO96LCD5bqm","client":"Panasonic (松下北美能源) - 全局资源协同与智能调度","industry":"工业制造","scenario":"全局资源协同与智能调度"},{"id":"case-TW91bnQgU2luYWkgKOilvWliOWxseWMumZoikgLSDljLvnlpfpnZ7nu5PmnoTljJbmlbDmja7lpITnkIY","client":"Mount Sinai (西奈山医院) - 医疗非结构化数据处理","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-VGhvbWFzIENhdmFuYWdoIENvbnN0cnVjdGlvbg","client":"Thomas Cavanagh Construction","industry":"建筑与房地产","scenario":"全局资源协同与智能调度"},{"id":"case-5Lqa5rSy5pQ55S15Lh6LQ6JCl5ZWG","client":"亚洲某电信运营商","industry":"科技与通信","scenario":"复杂流程自动化与智能客服"},{"id":"case-VHlzb24gRm9vZHMgKOazsOajrumjnWTgSk","client":"Tyson Foods (泰森食品)","industry":"零售与消费","scenario":"全局供应链与动态排产"},{"id":"case-VVMgQXJteSAo576O5Zu96ZmG5YabKQ","client":"US Army (美国陆军)","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-VVNEQSAo576O5Zu95Yac5Lia6YOoKQ","client":"USDA (美国农业部)","industry":"政府机构","scenario":"情报分析与辅助决策"},{"id":"case-5pQ6YeN5Z6L6L2m6L6G5Yi26YCg5LyB5Lia","client":"某重型车辆制造企业","industry":"工业制造","scenario":"全局供应链与动态排产"},{"id":"case-V2FsZ3JlZW5zICjmsoPlsJTmoLzmnpcp","client":"Walgreens (沃尔格林)","industry":"零售与消费","scenario":"全局资源协同与智能调度"},{"id":"case-Tm92YXJ0aXMgKOivuuWNjik","client":"Novartis (诺华)","industry":"医疗与生命科学","scenario":"研发与知识联邦"},{"id":"case-Qm91bmRsZXNzIERpc2NvdmVyeQ","client":"Boundless Discovery","industry":"科技与通信","scenario":"研发与知识联邦"},{"id":"case-V29ybGQgVmlldw","client":"World View","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-WktIICjpnIflnaTooYwp","client":"ZKH (震坤行)","industry":"零售与消费","scenario":"全局供应链与动态排产"},{"id":"case-emlnZ2l6","client":"ziggiz","industry":"科技与通信","scenario":"全局资源协同与智能调度"},{"id":"case-QXRsYXMgQ2FyZQ","client":"Atlas Care","industry":"医疗与生命科学","scenario":"复杂流程自动化与智能客服"},{"id":"case-Q2l0aSBXZWFsdGggKOiKseaXli0ouWvjCk","client":"Citi Wealth (花旗财富)","industry":"金融与保险","scenario":"复杂流程自动化与智能客服"},{"id":"case-Qm9sdA","client":"Bolt","industry":"零售与消费","scenario":"复杂流程自动化与智能客服"},{"id":"case-QUlHICjnvo7lm73lm73pmYXpm4blm6Ip","client":"AIG (美国国际集团)","industry":"金融与保险","scenario":"复杂流程自动化与智能客服"},{"id":"case-N0JyaWRnZXM","client":"7Bridges","industry":"交通出行与物流","scenario":"风控、合规与安全审计"},{"id":"case-RG9EICjnvo7lm73lm73pmLLpg6gp","client":"DoD (美国国防部)","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-UGFuYXNvbmljICjmnb7kuIvljJfnvo7og73mupApIC0g6aKE5rWL5oCn57u05oqk5LiO6K65aSH5a2q55Sf","client":"Panasonic (松下北美能源) - 预测性维护与设备孪生","industry":"工业制造","scenario":"预测性维护与设备孪生"},{"id":"case-QVQmVCAtIOeJqeeQhue9kee7nOikOiQpQ","client":"AT&T - 物理网络运营","industry":"科技与通信","scenario":"企业IT运维与数据治理"},{"id":"case-QWlyYnVzICjnqbrlrqIp","client":"Airbus (空客)","industry":"国防与航空航天","scenario":"全局供应链与动态排产"},{"id":"case-5pQ5aSn5Z6L5bel5YW35Yi26YCg44CB5om55YR5LiO6Zu25ZSu5LyB5Lia","client":"某大型工具制造、批发与零售企业","industry":"零售与消费","scenario":"复杂流程自动化与智能客服"},{"id":"case-TkhTICjoi7Hlm73lm73lrrbljLvnlpfmnI3liqHkvZPns7sp","client":"NHS (英国国家医疗服务体系)","industry":"医疗与生命科学","scenario":"情报分析与辅助决策"},{"id":"case-QW1lcmljYW4gQWlybGluZXMgKOejuWbveiIquepuik","client":"American Airlines (美国航空)","industry":"交通出行与物流","scenario":"全局供应链与动态排产"},{"id":"case-VVMgQXJteSBTb2Z0d2FyZSBGYWN0b3J5ICjnvo7lm73pmYblhpvovaku7blt6XljoIp","client":"US Army Software Factory (美国陆军软件工厂)","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-5LiA5a625aSn5Z6L5qyn5rSy5Ld6Zmp5YWs5Y4","client":"一家大型欧洲保险公司","industry":"金融与保险","scenario":"复杂流程自动化与智能客服"},{"id":"case-5pQ576O5Zu96L2m5LyB","client":"某美国车企","industry":"工业制造","scenario":"复杂流程自动化与智能客服"},{"id":"case-RG9EIEhhd2FpaSAo576O5Zu95Zu96Ziy6YOo5aSP5aiB5aS3KQ","client":"DoD Hawaii (美国国防部夏威夷)","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-SGVsbUd1YXJkIEFJ","client":"HelmGuard AI","industry":"科技与通信","scenario":"风控、合规与安全审计"},{"id":"case-QVQmVCAtIOaZuuiDveW3peWNleWkhOeQhg","client":"AT&T - 智能工单处理","industry":"科技与通信","scenario":"企业IT运维与数据治理"},{"id":"case-U3VwZXJzY3JpcHQ","client":"Superscript","industry":"医疗与生命科学","scenario":"风控、合规与安全审计"},{"id":"case-RGF0YUhBVUw","client":"DataHAUL","industry":"交通出行与物流","scenario":"全局资源协同与智能调度"},{"id":"case-RFRO","client":"DTN","industry":"能源与化工","scenario":"全局供应链与动态排产"},{"id":"case-U29ubmVkaXg","client":"Sonnedix","industry":"能源与化工","scenario":"预测性维护与设备孪生"},{"id":"case-U3RyaXZld29ya3M","client":"Striveworks","industry":"国防与航空航天","scenario":"全局资源协同与智能调度"},{"id":"case-SmFjb2Jz","client":"Jacobs","industry":"公共事业","scenario":"全局资源协同与智能调度"},{"id":"case-UGh5c25h","client":"Physna","industry":"科技与通信","scenario":"全局供应链与动态排产"},{"id":"case-S2F2YW5hdWdoIChLYXZhbmF1Z2jlu7rnrZEp","client":"Kavanaugh (Kavanaugh建筑)","industry":"建筑与房地产","scenario":"全局资源协同与智能调度"},{"id":"case-T255eCAo6Jma5ouf5ryU56S65qGI5L6LKQ","client":"Onyx (虚拟演示案例)","industry":"工业制造","scenario":"预测性维护与设备孪生"},{"id":"case-SkQgUG93ZXI","client":"JD Power","industry":"工业制造","scenario":"预测性维护与设备孪生"},{"id":"case-RElTSA","client":"DISH","industry":"科技与通信","scenario":"企业IT运维与数据治理"},{"id":"case-TG93ZSdzICjlirPmsI8p","client":"Lowe's (劳氏)","industry":"零售与消费","scenario":"复杂流程自动化与智能客服"},{"id":"case-VVMgU3RhdGUgRGVwYXJ0bWVudCAo576O5Zu95Zu95Yqh6ZmiKQ","client":"US State Department (美国国务院)","industry":"政府机构","scenario":"情报分析与辅助决策"},{"id":"case-VHJpbml0eSBJbmR1c3RyaWVzICjkuInkuIDlt6XkuJop","client":"Trinity Industries (三一工业)","industry":"交通出行与物流","scenario":"风控、合规与安全审计"},{"id":"case-Q0lBICjnvo7lm73kuK3lpK7mg4XmiqXlsYAp","client":"CIA (美国中央情报局)","industry":"国防与航空航天","scenario":"情报分析与辅助决策"},{"id":"case-QUFSUA","client":"AARP","industry":"医疗与生命科学","scenario":"研发与知识联邦"},{"id":"case-Q0FaIElOVkVTVE1FTlRT","client":"CAZ INVESTMENTS","industry":"金融与保险","scenario":"复杂流程自动化与智能客服"},{"id":"case-RVNJ","client":"ESI","industry":"工业制造","scenario":"复杂流程自动化与智能客服"},{"id":"case-R2VuZXJhbCBNaWxscyAo6YCa55So56Oo5Z2KKQ","client":"General Mills (通用磨坊)","industry":"零售与消费","scenario":"全局供应链与动态排产"},{"id":"case-SGVpbmVrZW4gKOWWnOWKmyk","client":"Heineken (喜力)","industry":"零售与消费","scenario":"全局供应链与动态排产"},{"id":"case-VW5pdGVkIEFpcmxpbmVzICjnvo7ogZToiKop","client":"United Airlines (美联航)","industry":"交通出行与物流","scenario":"企业IT运维与数据治理"},{"id":"case-V2VuZHkncyAo5rip6JKC5rGJ5aChKQ","client":"Wendy's (温蒂汉堡)","industry":"零售与消费","scenario":"全局供应链与动态排产"},{"id":"case-5Lit5Zu96IGU6YCaIChDaGluYSBVbmljb20p","client":"中国联通 (China Unicom)","industry":"科技与通信","scenario":"全局供应链与动态排产"},{"id":"case-5Lit5Zu956e75YqoIChDaGluYSBNb2JpbGUp","client":"中国移动 (China Mobile)","industry":"科技与通信","scenario":"风控、合规与安全审计"},{"id":"case-5Y2X5pa555S1572RIChDU0cp","client":"南方电网 (CSG)","industry":"公共事业","scenario":"全局资源协同与智能调度"},{"id":"case-5YyX5o6n5rC05YqhIChCZWlrb25nIFdhdGVyKQ","client":"北控水务 (Beikong Water)","industry":"公共事业","scenario":"预测性维护与设备孪生"},{"id":"case-5Lic6aOO6ZuG5ZuiIChEb25nZmVuZyk","client":"东风集团 (Dongfeng)","industry":"工业制造","scenario":"研发与知识联邦"},{"id":"case-Si5ELiBQb3dlcg","client":"J.D. Power","industry":"企业与专业服务","scenario":"情报分析与辅助决策"},{"id":"case-VG90b2dp","client":"Totogi","industry":"科技与通信","scenario":"企业IT运维与数据治理"},{"id":"case-TWFyY28gUG9sbyBOZXR3b3Jr","client":"Marco Polo Network","industry":"金融与保险","scenario":"风控、合规与安全审计"},{"id":"case-VHJpbml0eVJhaWw","client":"TrinityRail","industry":"工业制造","scenario":"全局供应链与动态排产"}];
+        
+        function openSearch() {
+            const modal = document.getElementById('searchModal');
+            modal.classList.add('active');
+            setTimeout(() => document.getElementById('searchInput').focus(), 50);
+            renderResults(searchIndex); // show all initially
+        }
+        
+        function closeSearch(e) {
+            if (e && e.target !== e.currentTarget && !e.target.classList.contains('search-close')) return;
+            const modal = document.getElementById('searchModal');
+            modal.classList.remove('active');
+            document.getElementById('searchInput').value = '';
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderResults(searchIndex);
+                return;
+            }
+            const filtered = searchIndex.filter(c => 
+                c.client.toLowerCase().includes(query) || 
+                c.industry.toLowerCase().includes(query) ||
+                c.scenario.toLowerCase().includes(query)
+            );
+            renderResults(filtered);
+        });
+        
+        function renderResults(results) {
+            const container = document.getElementById('searchResults');
+            container.innerHTML = '';
+            if (results.length === 0) {
+                container.innerHTML = '<div style="color: rgba(241,233,214,0.5); font-size: 20px; text-align: center; margin-top: 40px;">未找到匹配案例</div>';
+                return;
+            }
+            results.forEach(res => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `
+                    <div class="search-result-client">${res.client}</div>
+                    <div>
+                        <span class="search-result-meta">${res.industry}</span>
+                        <span style="color: #F1E9D6; font-size: 14px; opacity: 0.7;">${res.scenario}</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    closeSearch();
+                    window.deck.goToId(res.id);
+                };
+                container.appendChild(div);
+            });
+        }
+        
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeSearch();
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                openSearch();
+            }
+        });
+    </script>
 </body>
+
 </html>
