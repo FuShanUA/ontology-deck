@@ -528,25 +528,25 @@ svg {
     
         /* --- Search Modal Styles --- */
         .global-search-btn {
-            position: fixed;
-            bottom: 30px;
+            position: absolute;
+            bottom: 25px; /* align with slide-counter visually */
             left: 50%;
             transform: translateX(-50%);
             background: #0F1A5C;
             color: #F1E9D6;
             border: 2px solid #F1E9D6;
-            padding: 12px 28px;
+            padding: 6px 16px; /* Reduced height by ~1/4 */
             font-family: var(--font-body);
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
-            border-radius: 30px;
+            border-radius: 20px;
             cursor: pointer;
             z-index: 1000;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
         .global-search-btn:hover {
             background: #3A4593;
@@ -7197,6 +7197,10 @@ svg {
                 <div class="subtitle" style="font-size: 36px;">感谢您的阅览</div>
             </div>
         </section>
+        <button class="global-search-btn" onclick="openSearch()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            搜索案例
+        </button>
         </main>
     </div>
 
@@ -7372,11 +7376,7 @@ svg {
         new SlidePresentation();
     </script>
 
-    <!-- Search Button & Modal -->
-    <button class="global-search-btn" onclick="openSearch()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        搜索案例
-    </button>
+
     <div class="search-modal" id="searchModal" onclick="closeSearch(event)">
         <div class="search-input-wrapper" onclick="event.stopPropagation()">
             <input type="text" class="search-input" id="searchInput" placeholder="搜索关键词 / 行业..." autocomplete="off">
