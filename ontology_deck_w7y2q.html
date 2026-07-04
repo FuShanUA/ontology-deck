@@ -7167,6 +7167,7 @@ svg {
                 this.stage = document.getElementById('deckStage');
                 this.setupStageScale();
                 this.setupKeyboardNav();
+                this.setupTouchNav();
                 this.showSlide(0);
                 window.deck = this; 
             }
@@ -7190,6 +7191,28 @@ svg {
                         this.prev();
                     }
                 });
+            }
+
+            setupTouchNav() {
+                this.touchStartX = 0;
+                this.touchEndX = 0;
+                document.addEventListener('touchstart', e => {
+                    this.touchStartX = e.changedTouches[0].screenX;
+                }, {passive: true});
+                document.addEventListener('touchend', e => {
+                    this.touchEndX = e.changedTouches[0].screenX;
+                    this.handleSwipe();
+                }, {passive: true});
+            }
+
+            handleSwipe() {
+                const swipeThreshold = 50;
+                if (this.touchEndX < this.touchStartX - swipeThreshold) {
+                    this.next();
+                }
+                if (this.touchEndX > this.touchStartX + swipeThreshold) {
+                    this.prev();
+                }
             }
 
             next() {
