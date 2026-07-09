@@ -7296,6 +7296,7 @@ svg {
                 this.setupStageScale();
                 this.setupKeyboardNav();
                 this.setupTouchNav();
+                this.setupClickNav();
                 this.showSlide(0);
                 window.deck = this; 
             }
@@ -7331,6 +7332,24 @@ svg {
                     this.touchEndX = e.changedTouches[0].screenX;
                     this.handleSwipe();
                 }, {passive: true});
+            }
+
+            setupClickNav() {
+                document.addEventListener('click', (e) => {
+                    // Ignore clicks on links, buttons, inputs, or inside the search modal
+                    if (e.target.closest('a, button, input, .search-modal')) {
+                        return;
+                    }
+                    
+                    const clickX = e.clientX;
+                    const threshold = window.innerWidth * 0.2;
+                    
+                    if (clickX < threshold) {
+                        this.prev();
+                    } else {
+                        this.next();
+                    }
+                });
             }
 
             handleSwipe() {
