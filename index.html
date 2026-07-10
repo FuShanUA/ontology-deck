@@ -648,11 +648,32 @@ svg {
             border-radius: 4px;
             margin-right: 8px;
         }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: rgba(241, 233, 214, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+            padding: 20px;
+            transition: color 0.3s, transform 0.2s;
+            user-select: none;
+        }
+        .nav-arrow:hover {
+            color: rgba(241, 233, 214, 0.8);
+            transform: translateY(-50%) scale(1.2);
+        }
+        .nav-left { left: 20px; }
+        .nav-right { right: 20px; }
     </style>
 
 </head>
 <body>
     <div class="deck-viewport">
+        <div class="nav-arrow nav-left" onclick="if(window.deck) deck.prev(); event.stopPropagation();">&#10094;</div>
+        <div class="nav-arrow nav-right" onclick="if(window.deck) deck.next(); event.stopPropagation();">&#10095;</div>
         <main class="deck-stage" id="deckStage">
             <!-- 0: Title Slide -->
             <section class="slide title-slide active visible">
